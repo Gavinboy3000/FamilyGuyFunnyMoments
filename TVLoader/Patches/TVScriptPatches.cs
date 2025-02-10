@@ -1,5 +1,5 @@
 ﻿using HarmonyLib;
-
+using System.Collections.Generic;
 using System.Reflection;
 
 using TVLoader.Utils;
@@ -13,7 +13,7 @@ namespace TVLoader.Patches
 {
 
 	[HarmonyPatch(typeof(TVScript))]
-	internal class TVScriptPatches
+	internal static class TVScriptPatches
 	{
 		private static FieldInfo currentClipProperty = typeof(TVScript).GetField("currentClip", BindingFlags.NonPublic | BindingFlags.Instance);
 		private static FieldInfo currentTimeProperty = typeof(TVScript).GetField("currentClipTime", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -39,6 +39,7 @@ namespace TVLoader.Patches
 				renderTexture = currentVideoPlayer.targetTexture;
 
 				if (VideoManager.Videos.Count > 0)
+					VideoManager.Videos.Shuffle();
 					PrepareVideo(__instance, 0);
 			}
 
@@ -58,7 +59,12 @@ namespace TVLoader.Patches
 			// Skip to the next video if this is not our first time turning on the TV
 			if (on && tvHasPlayedBefore)
 			{
-				currentClip = (currentClip + 1) % VideoManager.Videos.Count;
+				if (currentClip + 1 < VideoManager.Videos.Count) currentClip = (currentClip + 1) % VideoManager.Videos.Count;
+				else {
+					VideoManager.Videos.Shuffle();
+					currentClip = 0;
+				}
+				
 				currentClipProperty.SetValue(__instance, currentClip);
 			}
 
@@ -85,14 +91,18 @@ namespace TVLoader.Patches
 		public static bool TVFinishedClip(TVScript __instance, VideoPlayer source)
 		{
 			// Don't bother with TV stuff if it's off or we're inside
-			if (!__instance.tvOn || GameNetworkManager.Instance.localPlayerController.isInsideFactory)
-				return false;
+			//if (!__instance.tvOn || GameNetworkManager.Instance.localPlayerController.isInsideFactory)
+			//	return false;
 
 			// Skip to the next video
 			TVLoaderPlugin.Log.LogInfo("TVFinishedClip");
 			int currentClip = (int)currentClipProperty.GetValue(__instance);
 			if (VideoManager.Videos.Count > 0)
-				currentClip = (currentClip + 1) % VideoManager.Videos.Count;
+				if (currentClip + 1 < VideoManager.Videos.Count) currentClip = (currentClip + 1) % VideoManager.Videos.Count;
+				else {
+					VideoManager.Videos.Shuffle();
+					currentClip = 0;
+				}
 
 			currentTimeProperty.SetValue(__instance, 0f);
 			currentClipProperty.SetValue(__instance, currentClip);
@@ -107,7 +117,12 @@ namespace TVLoader.Patches
 			if (index == -1)
 			{
 				int currentClip = (int)currentClipProperty.GetValue(instance);
-				index = currentClip + 1;
+
+				if (currentClip + 1 < VideoManager.Videos.Count) index = currentClip + 1;
+				else {
+					VideoManager.Videos.Shuffle();
+					index = 0;
+				}
 			}
 
 			if (nextVideoPlayer != null && nextVideoPlayer.gameObject.activeInHierarchy)
@@ -153,6 +168,20 @@ namespace TVLoader.Patches
 			instance.video.Play();
 
 			PrepareVideo(instance);
+		}
+
+		private static void Shuffle<T>(this IList<T> list) {
+			int n = list.Count;
+
+			while (n > 1) {
+				n--;
+
+				int k = Random.Range(0, n + 1);
+				T value = list[k];
+
+				list[k] = list[n];
+				list[n] = value;
+			}
 		}
 
 	}

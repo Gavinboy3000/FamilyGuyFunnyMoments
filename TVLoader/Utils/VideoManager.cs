@@ -11,26 +11,16 @@ namespace TVLoader.Utils
 
 		public static void Load()
 		{
-			// Content Packs
-			var plugins = Directory.GetDirectories(Paths.PluginPath);
-			foreach (var plugin in plugins)
-			{
-				string videoPath = Path.Combine(Paths.PluginPath, plugin, "Television Videos");
-				if (!Directory.Exists(videoPath)) continue;
-				var videos = Directory.GetFiles(videoPath, "*.mp4");
-				Videos.AddRange(videos);
-				TVLoaderPlugin.Log.LogInfo($"{plugin} has {videos.Length} videos.");
-			}
+			// Family guy funny moments
+			string myPath = Path.Combine(Paths.PluginPath, "Gavinboy3000-FamilyGuyFunnyMoments", "Videos");
 
-			// Manual videos
-			string manualPath = Path.Combine(Paths.PluginPath, "Television Videos");
-			if (!Directory.Exists(manualPath))
-				Directory.CreateDirectory(manualPath);
+			if (!Directory.Exists(myPath))
+				Directory.CreateDirectory(myPath);
 
-			var manualVideos = Directory.GetFiles(manualPath, "*.mp4");
-			Videos.AddRange(manualVideos);
-			TVLoaderPlugin.Log.LogInfo($"Global has {manualVideos.Length} videos.");
+			var myVideos = Directory.GetFiles(myPath, "*.mp4");
 
+			Videos.AddRange(myVideos);
+			TVLoaderPlugin.Log.LogInfo($"There are {myVideos.Length} videos.");
 			TVLoaderPlugin.Log.LogInfo($"Loaded {Videos.Count} total.");
 		}
 	}

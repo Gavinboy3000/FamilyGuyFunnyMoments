@@ -1,8 +1,8 @@
 {
-    "name": "TVLoader",
-    "version_number": "1.1.2",
-    "website_url": "https://github.com/RattenBonkers",
-    "description": "Allows players to add custom videos to the Television.",
+    "name": "FamilyGuyFunnyMoments",
+    "version_number": "1.0,0",
+    "website_url": "https://github.com/Gavinboy3000/FamilyGuyFunnyMoments",
+    "description": "Makes the Television play Family Guy funny moments.",
     "dependencies": [
         "BepInEx-BepInExPack-5.4.2100"
     ]
