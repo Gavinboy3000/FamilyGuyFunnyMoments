@@ -12,7 +12,7 @@ namespace TVLoader.Utils
 		public static void Load()
 		{
 			// Family guy funny moments
-			string myPath = Path.Combine(Paths.PluginPath, "Gavinboy3000-FamilyGuyFunnyMoments", "Videos");
+			string myPath = Path.Combine(Paths.PluginPath, "Gavinboy3000-FamilyGuyFunnyMoments");
 
 			if (!Directory.Exists(myPath))
 				Directory.CreateDirectory(myPath);
