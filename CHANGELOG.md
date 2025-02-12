@@ -1,3 +1,7 @@
+## Version 1.0.3
+
+Added more videos
+
 ## Version 1.0.2
 
 The right videos are now included
